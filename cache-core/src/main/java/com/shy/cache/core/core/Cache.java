@@ -2,10 +2,13 @@ package com.shy.cache.core.core;
 
 import com.shy.cache.api.ICache;
 import com.shy.cache.api.ICacheEvict;
+import com.shy.cache.api.ICacheExpire;
 import com.shy.cache.core.exception.CacheRuntimeException;
 import com.shy.cache.core.support.evict.CacheEvictContext;
+import com.shy.cache.core.support.expire.CacheExpire;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,11 +16,11 @@ import java.util.Set;
  * @author shy
  * @date 2023-07-14 23:27
  */
-public class Cache<K,V> implements ICache<K ,V> {
+public class Cache<K, V> implements ICache<K, V> {
     /**
      * map信息
      */
-    private Map<K,V> map;
+    private Map<K, V> map;
 
     /**
      * 限制大小
@@ -27,16 +30,24 @@ public class Cache<K,V> implements ICache<K ,V> {
     /**
      * 驱逐策略
      */
-    private ICacheEvict<K,V> cacheEvict;
+    private ICacheEvict<K, V> cacheEvict;
+
+    /**
+     * 过期策略
+     * 暂时不暴露，过期策略写死
+     */
+    private ICacheExpire<K, V> cacheExpire;
 
     /**
      * 构造缓存
+     *
      * @param context
      */
     public Cache(CacheContext<K, V> context) {
         this.map = context.map();
         this.cacheEvict = context.cacheEvict();
         this.sizeLimit = context.size();
+        this.cacheExpire = new CacheExpire<>(this);
     }
 
 
@@ -48,11 +59,11 @@ public class Cache<K,V> implements ICache<K ,V> {
         cacheEvict.evict(context);
 
         // 判断驱逐之后的信息
-        if (isSizeLimit()){
+        if (isSizeLimit()) {
             throw new CacheRuntimeException("当前队列已满，数据添加失败!");
         }
         // 执行添加
-        return map.put(key,value);
+        return map.put(key, value);
     }
 
     /**
@@ -65,12 +76,14 @@ public class Cache<K,V> implements ICache<K ,V> {
 
     @Override
     public ICache<K, V> expire(K key, long timeMills) {
-        throw new UnsupportedOperationException();
+        long expireTime = System.currentTimeMillis() + timeMills;
+        return this.expireAt(key,expireTime);
     }
 
     @Override
     public ICache<K, V> expireAt(K key, long timeMills) {
-        throw new UnsupportedOperationException();
+        this.cacheExpire.expire(key,timeMills);
+        return this;
     }
 
     @Override
@@ -95,6 +108,9 @@ public class Cache<K,V> implements ICache<K ,V> {
 
     @Override
     public V get(Object key) {
+        //刷新过期信息,因为get(key)只需要获取这个key是否存在，因此只需要刷新这一个key即可
+        K genericKey  = (K)key;
+        this.cacheExpire.refreshExpire(Collections.singletonList(genericKey));
         return map.get(key);
     }
 
@@ -113,19 +129,39 @@ public class Cache<K,V> implements ICache<K ,V> {
         map.clear();
     }
 
+    /**
+     * 该方法调用结果返回之前需要刷新所有的key
+     * @return
+     */
     @Override
     public Set<K> keySet() {
+        this.refreshExpireAllKeys();
         return map.keySet();
     }
-
+    /**
+     * 该方法调用结果返回之前需要刷新所有的key
+     * @return
+     */
     @Override
     public Collection<V> values() {
+        this.refreshExpireAllKeys();
         return map.values();
     }
-
+    /**
+     * 该方法调用结果返回之前需要刷新所有的key
+     * @return
+     */
     @Override
     public Set<Entry<K, V>> entrySet() {
+        this.refreshExpireAllKeys();
         return map.entrySet();
+    }
+    /**
+     * 该方法调用结果返回之前需要刷新所有的key
+     * @return
+     */
+    private void refreshExpireAllKeys(){
+        this.cacheExpire.refreshExpire(map.keySet());
     }
 
 }

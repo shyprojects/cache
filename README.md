@@ -23,10 +23,10 @@ Maven 3.X 及其以上版本
         </dependency>
 ```
 
-## 测试
+## 基本测试
 
 ```java
-ICache<String, String> cache = CacheBs.<String,String>newInstance()
+	    ICache<String, String> cache = CacheBs.<String,String>newInstance()
                 // 指定缓存大小
                 .size(2)
                 // 指定驱逐策略
@@ -50,5 +50,31 @@ v2
 v3
 2
 [k2, k3]
+```
+
+## 使用引导类配置属性
+
+`CacheBs`作为缓存的引导类，支持fluent写法，编程更加优雅
+
+```java
+        ICache<String, String> cache = CacheBs.<String, String>newInstance()
+                .evict(CacheEvicts.<String,String>fifo())
+                .size(2)
+                .build();
+```
+
+## 过期支持
+
+```java
+	   ICache<String, String> cache = CacheBs.<String, String>newInstance()
+                .evict(CacheEvicts.<String,String>fifo())
+                .size(2)
+                .build();
+        cache.put("k1","v1");
+        cache.put("k2","v2");
+        // 给k1设置过期时间1s
+        cache.expire("k1",100);
+        TimeUnit.SECONDS.sleep(1);
+        System.out.println(cache.keySet());
 ```
 
