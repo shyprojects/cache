@@ -32,4 +32,14 @@ public class CacheEvicts {
     public static <K,V> ICacheEvict<K,V> none(){
         return new CacheEvictNone<>();
     }
+
+    /**
+     * LRU算法
+     * @return
+     * @param <K>
+     * @param <V>
+     */
+    public static <K, V> ICacheEvict<K, V> lru(){
+        return new CacheEvictLRU<>();
+    }
 }

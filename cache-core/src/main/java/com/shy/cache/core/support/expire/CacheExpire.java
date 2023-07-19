@@ -36,7 +36,7 @@ public class CacheExpire<K, V> implements ICacheExpire<K, V> {
     /**
      * 缓存实现
      */
-    private ICache<K, V> cache;
+    private final ICache<K, V> cache;
 
     /**
      * 线程池执行

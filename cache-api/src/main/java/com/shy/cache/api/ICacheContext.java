@@ -6,6 +6,7 @@ import java.util.Map;
  * @author shy
  * @date 2023-07-14 23:16
  */
+@Deprecated
 public interface ICacheContext<K, V> {
 
     /**

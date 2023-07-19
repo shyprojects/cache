@@ -76,12 +76,17 @@ public class CacheBs<K, V> {
         return this;
     }
 
+    /**
+     * 构建缓存信息
+     * @return
+     */
     public ICache<K ,V> build(){
-        CacheContext<K, V> context = new CacheContext<>();
-        context.cacheEvict(evict)
-                .size(size)
-                .map(map);
-        return new Cache<>(context);
+        Cache<K, V> cache = new Cache<>();
+        cache.sizeLimit(size);
+        cache.cacheEvict(evict);
+        cache.map(map);
+
+        return cache;
     }
 }
 

@@ -9,6 +9,7 @@ import java.util.Map;
  * @author shy
  * @date 2023-07-14 23:18
  */
+@Deprecated
 public class CacheContext<K, V> implements ICacheContext<K, V> {
     /**
      * map 信息

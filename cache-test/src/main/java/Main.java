@@ -11,8 +11,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-//     testCache();
-        testExpire();
+        testCache();
+//        testExpire();
     }
 
     public static void testCache() throws InterruptedException {
@@ -25,9 +25,7 @@ public class Main {
         cache.put("k1","v1");
         cache.put("k2","v2");
         cache.put("k3","v3");
-        cache.expire("k2",10);
-        TimeUnit.SECONDS.sleep(1);
-        System.out.println(cache.size());
+        System.out.println(cache.keySet());
     }
 
     public static void testExpire() throws InterruptedException {
@@ -42,5 +40,4 @@ public class Main {
         TimeUnit.SECONDS.sleep(1);
         System.out.println(cache.keySet());
     }
-
 }
