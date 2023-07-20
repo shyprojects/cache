@@ -2,6 +2,10 @@ package com.shy.cache.core.support.expire;
 
 import com.shy.cache.api.ICache;
 import com.shy.cache.api.ICacheExpire;
+import com.shy.cache.api.ICacheRemoveListener;
+import com.shy.cache.api.ICacheRemoveListenerContext;
+import com.shy.cache.core.constant.enums.CacheRemoveType;
+import com.shy.cache.core.support.listener.CacheRemoveListenerContext;
 import com.shy.cache.core.util.CollectionUtil;
 
 import java.util.Collection;
@@ -74,7 +78,7 @@ public class CacheExpire<K, V> implements ICacheExpire<K, V> {
                 if (count > LIMIT) {
                     return;
                 }
-                expireKey(entry);
+                expireKey(entry.getKey());
                 count++;
             }
         }
@@ -108,7 +112,7 @@ public class CacheExpire<K, V> implements ICacheExpire<K, V> {
         }else{
             for (Map.Entry<K, Long> entry : expireMap.entrySet()) {
                 // 这里需要删除cache和存放过期时间的map中的元素
-                this.expireKey(entry);
+                this.expireKey(entry.getKey());
             }
         }
     }
@@ -117,6 +121,7 @@ public class CacheExpire<K, V> implements ICacheExpire<K, V> {
      * 通过entry过期处理key
      * @param entry
      */
+    @Deprecated
     private void expireKey(Map.Entry<K, Long> entry) {
         // 获取过期时间
         K key = entry.getKey();
@@ -146,6 +151,12 @@ public class CacheExpire<K, V> implements ICacheExpire<K, V> {
         // 如果过期了
         if (expireAt <= currentTime) {
             expireMap.remove(key);
+            //再移除缓存中的
+            V removeValue = cache.remove(key);
+            ICacheRemoveListenerContext<K,V> context = CacheRemoveListenerContext.<K,V>newInstance().key(key).value(removeValue).type(CacheRemoveType.EXPIRE.code());
+            for (ICacheRemoveListener<K, V> removeListener : cache.removeListeners()) {
+                removeListener.listen(context);
+            }
         }
     }
 }

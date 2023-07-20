@@ -14,6 +14,6 @@ public class CacheRemoveListener<K, V> implements ICacheRemoveListener<K, V> {
 
     @Override
     public void listen(ICacheRemoveListenerContext<K, V> context) {
-        log.info("Remove key:" + context.key() + ",value:" + context.value() + ",type" + context.type());
+        log.info("Remove key:" + context.key() + ",value:" + context.value() + ",type:" + context.type());
     }
 }

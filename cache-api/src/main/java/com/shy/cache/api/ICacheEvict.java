@@ -10,17 +10,5 @@ public interface ICacheEvict<K, V> {
      * 驱逐方法
      * @param context 驱逐的信息封装
      */
-    ICacheEntry<K, V> evict(ICacheEvictContext<K, V> context);
-
-    /**
-     * 更新key
-     * @param key
-     */
-    void update(K key);
-
-    /**
-     * 移除key
-     * @param key
-     */
-    void remove(K key);
+    boolean evict(ICacheEvictContext<K, V> context);
 }

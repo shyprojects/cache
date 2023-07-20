@@ -22,6 +22,6 @@ public class CacheInterceptorTimeCost<K, V> implements ICacheInterceptor<K, V> {
     @Override
     public void after(ICacheInterceptorContext<K, V> context) {
         long costTime = context.endMillis() - context.startMillis();
-        log.info("Cost end,method:" + context.method().getName() + "cost:" + costTime + "ms");
+        log.info("Cost end,method:" + context.method().getName() + ",cost:" + costTime + "ms");
     }
 }

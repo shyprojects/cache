@@ -2,10 +2,12 @@
 
 Cache是一款可扩展的本地缓存框架
 
-**驱逐策略：**
+## 特性
 
-* 先进先出
-* 不驱逐，当超过缓存大小时抛出异常
+- fluent 流式写法，使编程更加优雅
+- 支持缓存expire过期策略
+- 支持自定义删除监听器
+- 多种evict驱逐策略
 
 # 快速开始
 
@@ -63,7 +65,7 @@ v3
                 .build();
 ```
 
-## 过期支持
+# 过期支持
 
 ```java
 	   ICache<String, String> cache = CacheBs.<String, String>newInstance()
@@ -76,5 +78,42 @@ v3
         cache.expire("k1",100);
         TimeUnit.SECONDS.sleep(1);
         System.out.println(cache.keySet());
+```
+
+
+
+# 删除监听器
+
+```java
+public class MyCacheRemoveListener<K,V> implements ICacheRemoveListener<K,V> {
+
+    final Logger log = Logger.getLogger(MyCacheRemoveListener.class);
+
+    @Override
+    public void listen(ICacheRemoveListenerContext<K, V> context) {
+        log.info("删除key");
+    }
+}
+```
+
+```java
+    public static void testCache() throws InterruptedException {
+        ICache<String, String> cache = CacheBs.<String,String>newInstance()
+                // 指定缓存大小
+                .size(2)
+                // 指定驱逐策略
+                .evict(new CacheEvictFIFO<>())
+                .addRemoveListener(new MyCacheRemoveListener<>())
+                .build();
+        cache.put("k1","v1");
+        cache.put("k2","v2");
+        cache.put("k3","v3");
+        System.out.println(cache.keySet());
+    }
+```
+
+```properties
+# 日志
+[INFO]3 MyCacheRemoveListenermain2023-07-20 19:30:42:674 删除key
 ```
 

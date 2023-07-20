@@ -2,6 +2,9 @@ package com.shy.cache.core.support.proxy.dynamic;
 
 import com.shy.cache.api.ICache;
 import com.shy.cache.core.support.proxy.ICacheProxy;
+import com.shy.cache.core.support.proxy.bs.CacheProxyBs;
+import com.shy.cache.core.support.proxy.bs.CacheProxyBsContext;
+import com.shy.cache.core.support.proxy.bs.ICacheProxyBsContext;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -31,7 +34,7 @@ public class DynamicProxy implements InvocationHandler, ICacheProxy {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-
-        return null;
+        ICacheProxyBsContext context = CacheProxyBsContext.newInstance().method(method).params(args).target(target);
+        return CacheProxyBs.newInstance().context(context).execute();
     }
 }

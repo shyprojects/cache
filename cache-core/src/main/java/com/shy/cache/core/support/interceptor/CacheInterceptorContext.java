@@ -14,7 +14,7 @@ public class CacheInterceptorContext<K, V> implements ICacheInterceptorContext<K
     /**
      * 缓存
      */
-    private ICache<K,V> cache;
+    private ICache<K, V> cache;
 
     /**
      * 执行的方法
@@ -70,4 +70,39 @@ public class CacheInterceptorContext<K, V> implements ICacheInterceptorContext<K
     public long endMillis() {
         return endMillis;
     }
+
+    public CacheInterceptorContext<K, V> cache(ICache<K, V> cache) {
+        this.cache = cache;
+        return this;
+    }
+
+    public CacheInterceptorContext<K, V> method(Method method) {
+        this.method = method;
+        return this;
+    }
+
+    public CacheInterceptorContext<K, V> params(Object[] params) {
+        this.params = params;
+        return this;
+    }
+
+    public CacheInterceptorContext<K, V> result(Object result) {
+        this.result = result;
+        return this;
+    }
+
+    public CacheInterceptorContext<K, V> startMillis(long startMillis) {
+        this.startMillis = startMillis;
+        return this;
+    }
+
+    public CacheInterceptorContext<K, V> endMillis(long endMillis) {
+        this.endMillis = endMillis;
+        return this;
+    }
+
+    public static <K, V> CacheInterceptorContext<K, V> newInstance() {
+        return new CacheInterceptorContext<>();
+    }
+
 }

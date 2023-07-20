@@ -1,13 +1,12 @@
 package com.shy.cache.core.core;
 
 import com.shy.cache.annotation.CacheInterceptor;
-import com.shy.cache.api.ICache;
-import com.shy.cache.api.ICacheEvict;
-import com.shy.cache.api.ICacheExpire;
-import com.shy.cache.api.ICacheRemoveListener;
+import com.shy.cache.api.*;
+import com.shy.cache.core.constant.enums.CacheRemoveType;
 import com.shy.cache.core.exception.CacheRuntimeException;
 import com.shy.cache.core.support.evict.CacheEvictContext;
 import com.shy.cache.core.support.expire.CacheExpire;
+import com.shy.cache.core.support.listener.CacheRemoveListenerContext;
 
 import java.util.*;
 
@@ -40,7 +39,7 @@ public class Cache<K, V> implements ICache<K, V> {
     /**
      * 删除监听类
      */
-    private List<ICacheRemoveListener<K,V>> removeListeners;
+    private List<ICacheRemoveListener<K, V>> removeListeners;
 
     /**
      * 构造缓存
@@ -55,40 +54,50 @@ public class Cache<K, V> implements ICache<K, V> {
 
     /**
      * 设置map信息
+     *
      * @param map
      * @return
      */
-    public ICache<K ,V> map(Map<K,V> map){
+    public ICache<K, V> map(Map<K, V> map) {
         this.map = map;
         return this;
     }
 
     /**
      * 设置sizeLimit
+     *
      * @param sizeLimit
      * @return
      */
-    public ICache<K,V> sizeLimit(int sizeLimit){
+    public ICache<K, V> sizeLimit(int sizeLimit) {
         this.sizeLimit = sizeLimit;
         return this;
     }
 
     /**
      * 设置cacheEvict
+     *
      * @param cacheEvict
      * @return
      */
-    public ICache<K,V> cacheEvict(ICacheEvict<K,V> cacheEvict){
+    public ICache<K, V> cacheEvict(ICacheEvict<K, V> cacheEvict) {
         this.cacheEvict = cacheEvict;
         return this;
     }
 
     @Override
+    @CacheInterceptor
     public V put(K key, V value) {
         // 尝试驱逐
         CacheEvictContext<K, V> context = new CacheEvictContext<>();
         context.key(key).size(sizeLimit).cache(this);
-        cacheEvict.evict(context);
+        boolean evictResult = cacheEvict.evict(context);
+        if (evictResult) {
+            ICacheRemoveListenerContext<K, V> removeListenerContext = CacheRemoveListenerContext.<K, V>newInstance().key(key).value(value).type(CacheRemoveType.EVICT.code());
+            for (ICacheRemoveListener<K, V> removeListener : this.removeListeners) {
+                removeListener.listen(removeListenerContext);
+            }
+        }
 
         // 判断驱逐之后的信息
         if (isSizeLimit()) {
@@ -100,6 +109,7 @@ public class Cache<K, V> implements ICache<K, V> {
 
     /**
      * 判断是否达到最大限制
+     *
      * @return
      */
     private boolean isSizeLimit() {
@@ -109,12 +119,12 @@ public class Cache<K, V> implements ICache<K, V> {
     @Override
     public ICache<K, V> expire(K key, long timeMills) {
         long expireTime = System.currentTimeMillis() + timeMills;
-        return this.expireAt(key,expireTime);
+        return this.expireAt(key, expireTime);
     }
 
     @Override
     public ICache<K, V> expireAt(K key, long timeMills) {
-        this.cacheExpire.expire(key,timeMills);
+        this.cacheExpire.expire(key, timeMills);
         return this;
     }
 
@@ -128,7 +138,7 @@ public class Cache<K, V> implements ICache<K, V> {
         return removeListeners;
     }
 
-    public ICache<K,V> removeListeners(List<ICacheRemoveListener<K,V>> removeListeners){
+    public ICache<K, V> removeListeners(List<ICacheRemoveListener<K, V>> removeListeners) {
         this.removeListeners = removeListeners;
         return this;
     }
@@ -161,7 +171,7 @@ public class Cache<K, V> implements ICache<K, V> {
     @CacheInterceptor
     public V get(Object key) {
         //刷新过期信息,因为get(key)只需要获取这个key是否存在，因此只需要刷新这一个key即可
-        K genericKey  = (K)key;
+        K genericKey = (K) key;
         this.cacheExpire.refreshExpire(Collections.singletonList(genericKey));
         return map.get(key);
     }
@@ -186,6 +196,7 @@ public class Cache<K, V> implements ICache<K, V> {
 
     /**
      * 该方法调用结果返回之前需要刷新所有的key
+     *
      * @return
      */
     @Override
@@ -193,8 +204,10 @@ public class Cache<K, V> implements ICache<K, V> {
     public Set<K> keySet() {
         return map.keySet();
     }
+
     /**
      * 该方法调用结果返回之前需要刷新所有的key
+     *
      * @return
      */
     @Override
@@ -202,8 +215,10 @@ public class Cache<K, V> implements ICache<K, V> {
     public Collection<V> values() {
         return map.values();
     }
+
     /**
      * 该方法调用结果返回之前需要刷新所有的key
+     *
      * @return
      */
     @Override
@@ -211,12 +226,14 @@ public class Cache<K, V> implements ICache<K, V> {
     public Set<Entry<K, V>> entrySet() {
         return map.entrySet();
     }
+
     /**
      * 该方法调用结果返回之前需要刷新所有的key
+     *
      * @return
      */
     @Deprecated
-    private void refreshExpireAllKeys(){
+    private void refreshExpireAllKeys() {
         this.cacheExpire.refreshExpire(map.keySet());
     }
 }

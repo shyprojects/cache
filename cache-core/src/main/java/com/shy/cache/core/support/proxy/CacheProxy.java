@@ -20,7 +20,7 @@ public final class CacheProxy {
             return (ICache<K, V>) new NoneProxy(cache).proxy();
         }
         final Class clazz = cache.getClass();
-        if (clazz.isInstance(clazz) || Proxy.isProxyClass(clazz)){
+        if (clazz.isInterface() || Proxy.isProxyClass(clazz)){
             return (ICache<K,V>) new DynamicProxy(cache).proxy();
         }
         return (ICache<K,V>) new CglibProxy(cache).proxy();
