@@ -20,6 +20,12 @@ public interface ICache<K, V> extends Map<K, V> {
     ICache<K,V> expire(final K key,final long timeMills);
 
     /**
+     * 获取缓存过期处理类
+     * @return
+     */
+    ICacheExpire<K,V> expire();
+
+    /**
      * 再指定过期时间
      * @param key
      * @param timeMills
