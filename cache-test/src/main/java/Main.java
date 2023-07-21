@@ -21,11 +21,11 @@ public class Main {
                 .size(2)
                 // 指定驱逐策略
                 .evict(new CacheEvictFIFO<>())
+                .load(new MyCacheLoad())
                 .addRemoveListener(new CacheListener<>())
                 .build();
         cache.put("k1","v1");
-        cache.put("k2","v2");
-        cache.put("k3","v3");
+        System.out.println(cache.keySet());
     }
 
     public static void testExpire() throws InterruptedException {

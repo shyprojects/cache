@@ -3,11 +3,13 @@ package com.shy.cache.core.bs;
 
 import com.shy.cache.api.ICache;
 import com.shy.cache.api.ICacheEvict;
+import com.shy.cache.api.ICacheLoad;
 import com.shy.cache.api.ICacheRemoveListener;
 import com.shy.cache.core.core.Cache;
 import com.shy.cache.core.core.CacheContext;
 import com.shy.cache.core.support.evict.CacheEvicts;
 import com.shy.cache.core.support.listener.CacheRemoveListeners;
+import com.shy.cache.core.support.load.CacheLoads;
 import com.shy.cache.core.support.proxy.CacheProxy;
 import com.shy.cache.core.util.ArgUtil;
 
@@ -54,6 +56,10 @@ public class CacheBs<K, V> {
      * 删除监听器
      */
     private List<ICacheRemoveListener<K,V>> removeListeners = CacheRemoveListeners.defaults();
+    /**
+     * 缓存初始化策略
+     */
+    private ICacheLoad<K,V> load = CacheLoads.none();
 
 
     /**
@@ -87,6 +93,11 @@ public class CacheBs<K, V> {
         return this;
     }
 
+    public CacheBs<K,V> load(ICacheLoad<K,V> load){
+        this.load = load;
+        return this;
+    }
+
     public CacheBs<K ,V> addRemoveListener(ICacheRemoveListener<K,V> listener){
         this.removeListeners.add(listener);
         return this;
@@ -102,6 +113,10 @@ public class CacheBs<K, V> {
         cache.cacheEvict(evict);
         cache.map(map);
         cache.removeListeners(removeListeners);
+        cache.load(load);
+
+        //调用初始化方法
+        cache.init();
         return CacheProxy.getProxy(cache);
     }
 

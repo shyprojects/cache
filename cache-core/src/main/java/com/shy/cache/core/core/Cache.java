@@ -42,15 +42,39 @@ public class Cache<K, V> implements ICache<K, V> {
     private List<ICacheRemoveListener<K, V>> removeListeners;
 
     /**
-     * 构造缓存
-     * @param context
+     * 缓存加载策略
      */
+    private ICacheLoad<K,V> load;
+
+//    /**
+//     * 构造缓存
+//     * @param context
+//     */
 //    public Cache(CacheContext<K, V> context) {
 //        this.map = context.map();
 //        this.cacheEvict = context.cacheEvict();
 //        this.sizeLimit = context.size();
 //        this.cacheExpire = new CacheExpire<>(this);
 //    }
+
+    @Override
+    public ICacheLoad<K,V> load(){
+        return this.load;
+    }
+
+    public ICache<K,V> load(ICacheLoad<K,V> load){
+        this.load = load;
+        return this;
+    }
+
+    /**
+     * 初始化方法
+     */
+    public void init(){
+        this.load.load(this);
+    }
+
+
 
     /**
      * 设置map信息

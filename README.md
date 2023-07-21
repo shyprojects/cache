@@ -117,3 +117,37 @@ public class MyCacheRemoveListener<K,V> implements ICacheRemoveListener<K,V> {
 [INFO]3 MyCacheRemoveListenermain2023-07-20 19:30:42:674 删除key
 ```
 
+# 添加load加载器
+
+实现`ICacheLoad`接口即可
+
+```java
+public class MyCacheLoad implements ICacheLoad<String,String> {
+    @Override
+    public void load(ICache<String,String> cache) {
+        cache.put("k0","v0");
+    }
+}
+```
+
+调用`load()`添加该加载器
+
+```java
+ICache<String, String> cache = CacheBs.<String,String>newInstance()
+                // 指定缓存大小
+                .size(2)
+                // 指定驱逐策略
+                .evict(new CacheEvictFIFO<>())
+                .load(new MyCacheLoad())
+                .addRemoveListener(new CacheListener<>())
+                .build();
+        cache.put("k1","v1");
+        System.out.println(cache.keySet());
+```
+
+结果：加载器中的数据已经加载
+
+```
+[k0, k1]
+```
+
