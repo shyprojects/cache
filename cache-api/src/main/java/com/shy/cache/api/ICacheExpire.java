@@ -21,4 +21,12 @@ public interface ICacheExpire<K, V> {
      * @param keyList
      */
     void refreshExpire(Collection<K> keyList);
+
+    /**
+     * 获取key的过期时间，如果不存在，则返回null
+     * @param key
+     * @return
+     */
+    Long expireTime(K key);
+
 }

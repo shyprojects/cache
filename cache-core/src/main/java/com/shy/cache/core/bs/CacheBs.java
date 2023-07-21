@@ -1,15 +1,14 @@
 package com.shy.cache.core.bs;
 
 
-import com.shy.cache.api.ICache;
-import com.shy.cache.api.ICacheEvict;
-import com.shy.cache.api.ICacheRemoveListener;
+import com.github.houbb.heaven.util.common.ArgUtil;
+import com.shy.cache.api.*;
 import com.shy.cache.core.core.Cache;
-import com.shy.cache.core.core.CacheContext;
 import com.shy.cache.core.support.evict.CacheEvicts;
 import com.shy.cache.core.support.listener.CacheRemoveListeners;
+import com.shy.cache.core.support.load.CacheLoads;
+import com.shy.cache.core.support.persist.CachePersists;
 import com.shy.cache.core.support.proxy.CacheProxy;
-import com.shy.cache.core.util.ArgUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -54,6 +53,15 @@ public class CacheBs<K, V> {
      * 删除监听器
      */
     private List<ICacheRemoveListener<K,V>> removeListeners = CacheRemoveListeners.defaults();
+    /**
+     * 缓存初始化策略
+     */
+    private ICacheLoad<K,V> load = CacheLoads.none();
+    /**
+     * 缓存持久化策略
+     */
+    private ICachePersist<K,V> persist = CachePersists.none();
+
 
 
     /**
@@ -87,8 +95,19 @@ public class CacheBs<K, V> {
         return this;
     }
 
+    public CacheBs<K,V> load(ICacheLoad<K,V> load){
+        this.load = load;
+        return this;
+    }
+
     public CacheBs<K ,V> addRemoveListener(ICacheRemoveListener<K,V> listener){
         this.removeListeners.add(listener);
+        return this;
+    }
+
+
+    public CacheBs<K,V> persist(ICachePersist<K,V> persist){
+        this.persist = persist;
         return this;
     }
 
@@ -102,6 +121,11 @@ public class CacheBs<K, V> {
         cache.cacheEvict(evict);
         cache.map(map);
         cache.removeListeners(removeListeners);
+        cache.load(load);
+        cache.persist(persist);
+
+        //调用初始化方法
+        cache.init();
         return CacheProxy.getProxy(cache);
     }
 

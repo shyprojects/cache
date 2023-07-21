@@ -1,12 +1,12 @@
 package com.shy.cache.core.support.expire;
 
+import com.github.houbb.heaven.util.util.CollectionUtil;
 import com.shy.cache.api.ICache;
 import com.shy.cache.api.ICacheExpire;
 import com.shy.cache.api.ICacheRemoveListener;
 import com.shy.cache.api.ICacheRemoveListenerContext;
 import com.shy.cache.core.constant.enums.CacheRemoveType;
 import com.shy.cache.core.support.listener.CacheRemoveListenerContext;
-import com.shy.cache.core.util.CollectionUtil;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -115,6 +115,11 @@ public class CacheExpire<K, V> implements ICacheExpire<K, V> {
                 this.expireKey(entry.getKey());
             }
         }
+    }
+
+    @Override
+    public Long expireTime(K key) {
+        return expireMap.get(key);
     }
 
     /**

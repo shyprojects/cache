@@ -7,13 +7,13 @@
     <groupId>com.shy</groupId>
     <artifactId>cache</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.2</version>
+    <version>0.0.4</version>
+
     <modules>
-        <module>cache-api</module>
         <module>cache-core</module>
         <module>cache-test</module>
+        <module>cache-api</module>
     </modules>
-
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>

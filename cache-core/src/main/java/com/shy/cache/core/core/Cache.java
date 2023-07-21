@@ -2,11 +2,13 @@ package com.shy.cache.core.core;
 
 import com.shy.cache.annotation.CacheInterceptor;
 import com.shy.cache.api.*;
+import com.shy.cache.core.bs.CacheBs;
 import com.shy.cache.core.constant.enums.CacheRemoveType;
 import com.shy.cache.core.exception.CacheRuntimeException;
 import com.shy.cache.core.support.evict.CacheEvictContext;
 import com.shy.cache.core.support.expire.CacheExpire;
 import com.shy.cache.core.support.listener.CacheRemoveListenerContext;
+import com.shy.cache.core.support.persist.InnerCachePersist;
 
 import java.util.*;
 
@@ -34,7 +36,7 @@ public class Cache<K, V> implements ICache<K, V> {
      * 过期策略
      * 暂时不暴露，过期策略写死
      */
-    private ICacheExpire<K, V> cacheExpire = new CacheExpire<>(this);
+    private ICacheExpire<K, V> cacheExpire;
 
     /**
      * 删除监听类
@@ -42,15 +44,55 @@ public class Cache<K, V> implements ICache<K, V> {
     private List<ICacheRemoveListener<K, V>> removeListeners;
 
     /**
-     * 构造缓存
-     * @param context
+     * 缓存加载策略
      */
+    private ICacheLoad<K,V> load;
+
+    /**
+     * 持久化策略
+     */
+    private ICachePersist<K,V> persist;
+
+//    /**
+//     * 构造缓存
+//     * @param context
+//     */
 //    public Cache(CacheContext<K, V> context) {
 //        this.map = context.map();
 //        this.cacheEvict = context.cacheEvict();
 //        this.sizeLimit = context.size();
 //        this.cacheExpire = new CacheExpire<>(this);
 //    }
+
+    @Override
+    public ICacheLoad<K,V> load(){
+        return this.load;
+    }
+
+    public ICache<K,V> load(ICacheLoad<K,V> load){
+        this.load = load;
+        return this;
+    }
+
+    /**
+     * 初始化方法
+     */
+    public void init(){
+        this.load.load(this);
+        this.cacheExpire = new CacheExpire<>(this);
+
+        //持久化设置
+        if (this.persist != null){
+            new InnerCachePersist<>(this,this.persist);
+        }
+    }
+
+
+    @Override
+    @CacheInterceptor
+    public ICacheExpire<K,V> expire(){
+        return this.cacheExpire;
+    }
 
     /**
      * 设置map信息
@@ -71,6 +113,16 @@ public class Cache<K, V> implements ICache<K, V> {
      */
     public ICache<K, V> sizeLimit(int sizeLimit) {
         this.sizeLimit = sizeLimit;
+        return this;
+    }
+
+    /**
+     *
+     * @param persist
+     * @return
+     */
+    public ICache<K,V> persist(ICachePersist<K,V> persist){
+        this.persist = persist;
         return this;
     }
 

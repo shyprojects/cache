@@ -1,10 +1,10 @@
 package com.shy.cache.core.support.proxy;
 
+import com.github.houbb.heaven.util.lang.ObjectUtil;
 import com.shy.cache.api.ICache;
 import com.shy.cache.core.support.proxy.cglib.CglibProxy;
 import com.shy.cache.core.support.proxy.dynamic.DynamicProxy;
 import com.shy.cache.core.support.proxy.none.NoneProxy;
-import com.shy.cache.core.util.ObjectUtil;
 
 import java.lang.reflect.Proxy;
 
