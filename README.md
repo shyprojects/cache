@@ -151,3 +151,22 @@ ICache<String, String> cache = CacheBs.<String,String>newInstance()
 [k0, k1]
 ```
 
+<<<<<<< HEAD
+# 添加了持久化功能
+
+调用`persist()`开启持久化功能，使用CachePersistDbJson每隔10s就会将内存中的数据进行一次持久化
+
+```java
+ICache<String, String> cache = CacheBs.<String,String>newInstance()
+        // 指定缓存大小
+        .size(2)
+        // 指定驱逐策略
+        .evict(new CacheEvictFIFO<>())
+        .load(new MyCacheLoad())
+        .addRemoveListener(new CacheListener<>())
+        .persist(new CachePersistDbJson<String,String>("1.rdb"))
+        .build();
+cache.put("k2","v3");
+```
+=======
+>>>>>>> 3ca48786fb75a14cb9d622a8ca40cf56387dadc7
