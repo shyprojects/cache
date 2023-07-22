@@ -2,7 +2,9 @@ import com.shy.cache.api.ICache;
 import com.shy.cache.core.bs.CacheBs;
 import com.shy.cache.core.support.evict.CacheEvictFIFO;
 import com.shy.cache.core.support.evict.CacheEvicts;
+import com.shy.cache.core.support.load.CacheLoadDbJson;
 import com.shy.cache.core.support.persist.CachePersistDbJson;
+import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
@@ -12,13 +14,26 @@ import java.util.concurrent.TimeUnit;
  */
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-        testPersist();
 //        testCache();
 //        testExpire();
     }
 
 
-    public static void testPersist(){
+
+    @Test
+    public void testLoadDbJson() throws InterruptedException {
+        ICache<String, String> cache = CacheBs.<String,String>newInstance()
+                // 指定缓存大小
+                .size(2)
+                // 指定驱逐策略
+                .evict(new CacheEvictFIFO<>())
+                .load(new CacheLoadDbJson<>("1.rdb"))
+                .build();
+        TimeUnit.SECONDS.sleep(5);
+        System.err.println(cache.keySet());
+    }
+    @Test
+    public void testPersist() throws InterruptedException {
         ICache<String, String> cache = CacheBs.<String,String>newInstance()
                 // 指定缓存大小
                 .size(2)
