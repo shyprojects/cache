@@ -9,13 +9,14 @@ import com.shy.cache.core.model.PersistEntity;
 import java.nio.file.StandardOpenOption;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /***
  * 持久化 db -- 基于json
  * @author shy
  * @date 2023-07-21 15:34
  */
-public class CachePersistDbJson<K, V> implements ICachePersist<K, V> {
+public class CachePersistDbJson<K, V> extends CachePersistAdaptor<K,V> {
 
     /**
      * 持久化存储的位置
@@ -44,5 +45,20 @@ public class CachePersistDbJson<K, V> implements ICachePersist<K, V> {
             //StandardOpenOption.APPEND 追加策略
             FileUtil.write(dbPath,JSONObject, StandardOpenOption.APPEND);
         }
+    }
+
+    @Override
+    public long delay() {
+        return 5;
+    }
+
+    @Override
+    public long period() {
+        return 5;
+    }
+
+    @Override
+    public TimeUnit timeUtil() {
+        return TimeUnit.MINUTES;
     }
 }
