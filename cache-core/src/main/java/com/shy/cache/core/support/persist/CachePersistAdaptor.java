@@ -6,29 +6,31 @@ import com.shy.cache.api.ICachePersist;
 import java.util.concurrent.TimeUnit;
 
 /***
- * 不持久化策略
+ * 缓存持久化：适配器模式
  * @author shy
- * @date 2023-07-21 15:23
+ * @date 2023-07-22 18:25
  */
-public class CachePersistNone<K,V> implements ICachePersist<K,V> {
-
+public class CachePersistAdaptor<K,V> implements ICachePersist<K,V> {
+    /**
+     * 持久化方法
+     * @param cache
+     */
     @Override
     public void persist(ICache<K, V> cache) {
-
     }
 
     @Override
     public long delay() {
-        return 0;
+        return period();
     }
 
     @Override
     public long period() {
-        return 0;
+        return 1;
     }
 
     @Override
     public TimeUnit timeUtil() {
-        return null;
+        return TimeUnit.SECONDS;
     }
 }

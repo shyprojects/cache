@@ -70,6 +70,11 @@ public class Cache<K, V> implements ICache<K, V> {
         return this.load;
     }
 
+    @Override
+    public ICachePersist<K, V> persist() {
+        return this.persist;
+    }
+
     public ICache<K,V> load(ICacheLoad<K,V> load){
         this.load = load;
         return this;
@@ -118,7 +123,6 @@ public class Cache<K, V> implements ICache<K, V> {
     }
 
     /**
-     *
      * @param persist
      * @return
      */
