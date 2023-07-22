@@ -19,6 +19,6 @@ public class CachePersists {
     }
 
     public static <K,V> ICachePersist<K,V> aof(String dbPath){
-        return new CachePersistAof<>();
+        return new CachePersistAof<>(dbPath);
     }
 }

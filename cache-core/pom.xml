@@ -45,7 +45,7 @@
         <dependency>
             <groupId>com.github.houbb</groupId>
             <artifactId>heaven</artifactId>
-            <version>0.1.116</version>
+            <version>0.1.117</version>
         </dependency>
 
         <dependency>
