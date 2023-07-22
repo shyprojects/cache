@@ -82,6 +82,62 @@ v3
 
 
 
+# 慢日志监听器
+
+**说明：**redis会存储慢操作相关日志，主要是由两个参数构成：
+
+* slowly-log-slower-than：预设阈值,它的单位是毫秒(1秒=1000000微秒)默认值是10000
+* slowlog-max-len 最多存储多少条的慢日志记录
+
+不过 redis 是直接存储到内存中，而且有长度限制。
+
+根据实际工作体验，如果我们可以添加慢日志的监听，然后有对应的存储或者报警，这样更加方便问题的分析和快速反馈。
+
+所以我们引入类似于删除的监听器。
+
+**自定义慢操作监听器：**
+
+```java
+public class MyCacheSlowListener<K,V> implements ICacheSlowListener<K,V> {
+
+    private final Logger log = Logger.getLogger(MyCacheSlowListener.class);
+
+    @Override
+    public void listen(ICacheSlowListenerContext context) {
+        log.warn("[慢日志]" + context.methodName());
+    }
+
+    @Override
+    public long slowerThanMills() {
+        return 0l;
+    }
+}
+```
+
+**使用：**
+
+```java
+ICache<String, String> cache = CacheBs.<String, String>newInstance()
+                .size(2)
+                .addSlowListener(new MyCacheSlowListener<>())
+                .build();
+        cache.put("k1","v1");
+        System.out.println(cache.get("k1"));
+```
+
+**效果：**
+
+```
+[INFO]73 com.shy.cache.core.support.interceptor.common.CacheInterceptorTimeCostmain2023-07-22 15:44:24:280 Cost end,method:put,cost:1ms
+[WARN]74 MyCacheSlowListenermain2023-07-22 15:44:24:281 [慢日志]put
+[INFO]75 com.shy.cache.core.support.interceptor.common.CacheInterceptorTimeCostmain2023-07-22 15:44:24:282 Cost start, method:get
+[INFO]75 com.shy.cache.core.support.interceptor.common.CacheInterceptorTimeCostmain2023-07-22 15:44:24:282 Cost end,method:get,cost:0ms
+[WARN]75 MyCacheSlowListenermain2023-07-22 15:44:24:282 [慢日志]get
+v1
+```
+
+
+
 # 删除监听器
 
 ```java

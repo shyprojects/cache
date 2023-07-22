@@ -21,6 +21,16 @@ public class Main {
 
 
     @Test
+    public void testSlowListener(){
+        ICache<String, String> cache = CacheBs.<String, String>newInstance()
+                .size(2)
+                .addSlowListener(new MyCacheSlowListener<>())
+                .build();
+        cache.put("k1","v1");
+        System.out.println(cache.get("k1"));
+    }
+
+    @Test
     public void testLoadDbJson() throws InterruptedException {
         ICache<String, String> cache = CacheBs.<String,String>newInstance()
                 // 指定缓存大小

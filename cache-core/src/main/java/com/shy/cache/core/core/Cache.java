@@ -2,12 +2,11 @@ package com.shy.cache.core.core;
 
 import com.shy.cache.annotation.CacheInterceptor;
 import com.shy.cache.api.*;
-import com.shy.cache.core.bs.CacheBs;
 import com.shy.cache.core.constant.enums.CacheRemoveType;
 import com.shy.cache.core.exception.CacheRuntimeException;
 import com.shy.cache.core.support.evict.CacheEvictContext;
 import com.shy.cache.core.support.expire.CacheExpire;
-import com.shy.cache.core.support.listener.CacheRemoveListenerContext;
+import com.shy.cache.core.support.listener.remove.CacheRemoveListenerContext;
 import com.shy.cache.core.support.persist.InnerCachePersist;
 
 import java.util.*;
@@ -37,6 +36,8 @@ public class Cache<K, V> implements ICache<K, V> {
      * 暂时不暴露，过期策略写死
      */
     private ICacheExpire<K, V> cacheExpire;
+
+    private List<ICacheSlowListener<K,V>> slowListeners;
 
     /**
      * 删除监听类
@@ -190,8 +191,18 @@ public class Cache<K, V> implements ICache<K, V> {
         return removeListeners;
     }
 
+    @Override
+    public List<ICacheSlowListener<K, V>> slowListeners() {
+        return slowListeners;
+    }
+
     public ICache<K, V> removeListeners(List<ICacheRemoveListener<K, V>> removeListeners) {
         this.removeListeners = removeListeners;
+        return this;
+    }
+
+    public ICache<K,V> slowListeners(List<ICacheSlowListener<K,V>> slowListeners){
+        this.slowListeners = slowListeners;
         return this;
     }
 
