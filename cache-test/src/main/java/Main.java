@@ -28,7 +28,11 @@ public class Main {
                 .addRemoveListener(new CacheListener<>())
                 .persist(new CachePersistDbJson<String,String>("1.rdb"))
                 .build();
+<<<<<<< HEAD
         cache.put("k2","v3");
+=======
+        cache.put("k1","v1");
+>>>>>>> 3ca48786fb75a14cb9d622a8ca40cf56387dadc7
     }
     public static void testCache() throws InterruptedException {
         ICache<String, String> cache = CacheBs.<String,String>newInstance()

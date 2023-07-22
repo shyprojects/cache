@@ -8,7 +8,10 @@
     <artifactId>cache</artifactId>
     <packaging>pom</packaging>
     <version>0.0.4</version>
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3ca48786fb75a14cb9d622a8ca40cf56387dadc7
     <modules>
         <module>cache-core</module>
         <module>cache-test</module>
