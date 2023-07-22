@@ -6,13 +6,12 @@ import com.shy.cache.api.ICacheExpire;
 import com.shy.cache.api.ICacheRemoveListener;
 import com.shy.cache.api.ICacheRemoveListenerContext;
 import com.shy.cache.core.constant.enums.CacheRemoveType;
-import com.shy.cache.core.support.listener.CacheRemoveListenerContext;
+import com.shy.cache.core.support.listener.remove.CacheRemoveListenerContext;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
-import java.util.concurrent.RunnableScheduledFuture;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
