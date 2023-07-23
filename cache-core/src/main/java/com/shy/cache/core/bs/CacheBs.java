@@ -5,7 +5,8 @@ import com.github.houbb.heaven.util.common.ArgUtil;
 import com.shy.cache.api.*;
 import com.shy.cache.core.core.Cache;
 import com.shy.cache.core.support.evict.CacheEvicts;
-import com.shy.cache.core.support.listener.CacheRemoveListeners;
+import com.shy.cache.core.support.listener.remove.CacheRemoveListeners;
+import com.shy.cache.core.support.listener.slow.CacheSlowListeners;
 import com.shy.cache.core.support.load.CacheLoads;
 import com.shy.cache.core.support.persist.CachePersists;
 import com.shy.cache.core.support.proxy.CacheProxy;
@@ -62,6 +63,11 @@ public class CacheBs<K, V> {
      */
     private ICachePersist<K,V> persist = CachePersists.none();
 
+    /**
+     * 慢日志监听器
+     */
+    private List<ICacheSlowListener<K,V>> slowListeners = CacheSlowListeners.none();
+
 
 
     /**
@@ -101,7 +107,14 @@ public class CacheBs<K, V> {
     }
 
     public CacheBs<K ,V> addRemoveListener(ICacheRemoveListener<K,V> listener){
+        ArgUtil.notNull(listener,"removeListener");
         this.removeListeners.add(listener);
+        return this;
+    }
+
+    public CacheBs<K,V> addSlowListener(ICacheSlowListener<K,V> listener){
+        ArgUtil.notNull(listener,"slowListener");
+        this.slowListeners.add(listener);
         return this;
     }
 
@@ -123,6 +136,7 @@ public class CacheBs<K, V> {
         cache.removeListeners(removeListeners);
         cache.load(load);
         cache.persist(persist);
+        cache.slowListeners(slowListeners);
 
         //调用初始化方法
         cache.init();

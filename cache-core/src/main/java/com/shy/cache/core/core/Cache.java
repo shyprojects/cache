@@ -2,12 +2,11 @@ package com.shy.cache.core.core;
 
 import com.shy.cache.annotation.CacheInterceptor;
 import com.shy.cache.api.*;
-import com.shy.cache.core.bs.CacheBs;
 import com.shy.cache.core.constant.enums.CacheRemoveType;
 import com.shy.cache.core.exception.CacheRuntimeException;
 import com.shy.cache.core.support.evict.CacheEvictContext;
 import com.shy.cache.core.support.expire.CacheExpire;
-import com.shy.cache.core.support.listener.CacheRemoveListenerContext;
+import com.shy.cache.core.support.listener.remove.CacheRemoveListenerContext;
 import com.shy.cache.core.support.persist.InnerCachePersist;
 
 import java.util.*;
@@ -38,6 +37,8 @@ public class Cache<K, V> implements ICache<K, V> {
      */
     private ICacheExpire<K, V> cacheExpire;
 
+    private List<ICacheSlowListener<K,V>> slowListeners;
+
     /**
      * 删除监听类
      */
@@ -67,6 +68,11 @@ public class Cache<K, V> implements ICache<K, V> {
     @Override
     public ICacheLoad<K,V> load(){
         return this.load;
+    }
+
+    @Override
+    public ICachePersist<K, V> persist() {
+        return this.persist;
     }
 
     public ICache<K,V> load(ICacheLoad<K,V> load){
@@ -117,7 +123,6 @@ public class Cache<K, V> implements ICache<K, V> {
     }
 
     /**
-     *
      * @param persist
      * @return
      */
@@ -138,7 +143,7 @@ public class Cache<K, V> implements ICache<K, V> {
     }
 
     @Override
-    @CacheInterceptor
+    @CacheInterceptor(aof = true)
     public V put(K key, V value) {
         // 尝试驱逐
         CacheEvictContext<K, V> context = new CacheEvictContext<>();
@@ -150,7 +155,6 @@ public class Cache<K, V> implements ICache<K, V> {
                 removeListener.listen(removeListenerContext);
             }
         }
-
         // 判断驱逐之后的信息
         if (isSizeLimit()) {
             throw new CacheRuntimeException("当前队列已满，数据添加失败!");
@@ -175,6 +179,7 @@ public class Cache<K, V> implements ICache<K, V> {
     }
 
     @Override
+    @CacheInterceptor(aof = true)
     public ICache<K, V> expireAt(K key, long timeMills) {
         this.cacheExpire.expire(key, timeMills);
         return this;
@@ -190,8 +195,18 @@ public class Cache<K, V> implements ICache<K, V> {
         return removeListeners;
     }
 
+    @Override
+    public List<ICacheSlowListener<K, V>> slowListeners() {
+        return slowListeners;
+    }
+
     public ICache<K, V> removeListeners(List<ICacheRemoveListener<K, V>> removeListeners) {
         this.removeListeners = removeListeners;
+        return this;
+    }
+
+    public ICache<K,V> slowListeners(List<ICacheSlowListener<K,V>> slowListeners){
+        this.slowListeners = slowListeners;
         return this;
     }
 
@@ -229,19 +244,19 @@ public class Cache<K, V> implements ICache<K, V> {
     }
 
     @Override
-    @CacheInterceptor
+    @CacheInterceptor(aof = true)
     public V remove(Object key) {
         return map.remove(key);
     }
 
     @Override
-    @CacheInterceptor
+    @CacheInterceptor(aof = true)
     public void putAll(Map<? extends K, ? extends V> m) {
         map.putAll(m);
     }
 
     @Override
-    @CacheInterceptor(refresh = true)
+    @CacheInterceptor(refresh = true,aof = true)
     public void clear() {
         map.clear();
     }

@@ -26,4 +26,12 @@ public @interface CacheInterceptor {
      */
     boolean refresh() default false;
 
+    /**
+     * 是否操作需要append to file 默认为false
+     * 对缓存的操作进行记录，除了查询操作
+     * @return
+     */
+    boolean aof() default false;
+
+
 }

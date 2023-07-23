@@ -45,8 +45,8 @@ public class InnerCachePersist<K,V> {
                 persist.persist(cache);
                 log.info("结束持久化...");
             } catch (Exception e) {
-                log.info("持久化异常" + e);
+                log.error("持久化异常" + e);
             }
-        },0,10, TimeUnit.SECONDS);
+        }, persist.delay(), persist.period(), persist.timeUtil());
     }
 }

@@ -2,6 +2,7 @@ package com.shy.cache.core.support.interceptor;
 
 
 import com.shy.cache.api.ICacheInterceptor;
+import com.shy.cache.core.support.interceptor.aof.CacheInterceptorAof;
 import com.shy.cache.core.support.interceptor.common.CacheInterceptorTimeCost;
 import com.shy.cache.core.support.interceptor.refresh.CacheInterceptorRefresh;
 
@@ -28,9 +29,13 @@ public final class CacheInterceptors {
      * 默认刷新拦截器
      * @return
      */
-    public static List<ICacheInterceptor> defaultRefrshList(){
+    public static List<ICacheInterceptor> defaultRefreshList(){
         List<ICacheInterceptor> list = new ArrayList<>();
         list.add(new CacheInterceptorRefresh());
         return list;
+    }
+
+    public static ICacheInterceptor aof(){
+        return new CacheInterceptorAof();
     }
 }

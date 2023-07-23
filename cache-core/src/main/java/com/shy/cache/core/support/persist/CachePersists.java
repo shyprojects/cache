@@ -9,12 +9,18 @@ import com.shy.cache.api.ICachePersist;
  */
 public class CachePersists {
 
-    private CachePersists(){}
+    private CachePersists() {
+    }
 
-    public static <K,V>ICachePersist<K,V> none(){
+    public static <K, V> ICachePersist<K, V> none() {
         return new CachePersistNone<>();
     }
-    public static <K,V>ICachePersist<K,V> dbJson(String dbPath){
+
+    public static <K, V> ICachePersist<K, V> dbJson(String dbPath) {
         return new CachePersistDbJson<>(dbPath);
+    }
+
+    public static <K, V> ICachePersist<K, V> aof(String dbPath) {
+        return new CachePersistAof<>(dbPath);
     }
 }

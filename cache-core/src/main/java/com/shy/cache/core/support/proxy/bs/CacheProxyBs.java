@@ -3,8 +3,10 @@ package com.shy.cache.core.support.proxy.bs;
 import com.shy.cache.annotation.CacheInterceptor;
 import com.shy.cache.api.ICache;
 import com.shy.cache.api.ICacheInterceptor;
+import com.shy.cache.api.ICachePersist;
 import com.shy.cache.core.support.interceptor.CacheInterceptorContext;
 import com.shy.cache.core.support.interceptor.CacheInterceptors;
+import com.shy.cache.core.support.persist.CachePersistAof;
 
 import java.util.List;
 
@@ -30,8 +32,12 @@ public final class CacheProxyBs {
     /**
      * 通用刷新拦截器
      */
-    private final List<ICacheInterceptor> refreshInterceptors = CacheInterceptors.defaultRefrshList();
+    private final List<ICacheInterceptor> refreshInterceptors = CacheInterceptors.defaultRefreshList();
 
+    /**
+     * aof持久化拦截器
+     */
+    private final ICacheInterceptor aofInterceptor = CacheInterceptors.aof();
 
     /**
      * 新建实例对象
@@ -70,6 +76,7 @@ public final class CacheProxyBs {
     public void interceptorHandler(CacheInterceptor cacheInterceptor
             ,CacheInterceptorContext interceptorContext,ICache cache,boolean before){
         if (cacheInterceptor != null){
+            // 通用拦截器
             if (cacheInterceptor.common()){
                 for (ICacheInterceptor commonInterceptor : commonInterceptors) {
                     if (before){
@@ -79,6 +86,7 @@ public final class CacheProxyBs {
                     }
                 }
             }
+            // 刷新拦截器
             if (cacheInterceptor.refresh()){
                 for (ICacheInterceptor refreshInterceptor : refreshInterceptors) {
                     if (before){
@@ -86,6 +94,15 @@ public final class CacheProxyBs {
                     }else{
                         refreshInterceptor.after(interceptorContext);
                     }
+                }
+            }
+            // aof持久化拦截器
+            ICachePersist persist = cache.persist();
+            if (cacheInterceptor.aof() && persist instanceof CachePersistAof){
+                if (before){
+                    aofInterceptor.before(interceptorContext);
+                }else {
+                    aofInterceptor.after(interceptorContext);
                 }
             }
         }
