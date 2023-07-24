@@ -4,6 +4,7 @@ package com.shy.cache.core.support.interceptor;
 import com.shy.cache.api.ICacheInterceptor;
 import com.shy.cache.core.support.interceptor.aof.CacheInterceptorAof;
 import com.shy.cache.core.support.interceptor.common.CacheInterceptorTimeCost;
+import com.shy.cache.core.support.interceptor.evict.CacheInterceptorEvict;
 import com.shy.cache.core.support.interceptor.refresh.CacheInterceptorRefresh;
 
 import java.util.ArrayList;
@@ -35,7 +36,19 @@ public final class CacheInterceptors {
         return list;
     }
 
+    /**
+     * aof模式
+     * @return
+     */
     public static ICacheInterceptor aof(){
         return new CacheInterceptorAof();
+    }
+
+    /**
+     * 驱逐策略拦截器
+     * @return
+     */
+    public static ICacheInterceptor evict(){
+        return new CacheInterceptorEvict();
     }
 }

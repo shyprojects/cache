@@ -40,6 +40,11 @@ public final class CacheProxyBs {
     private final ICacheInterceptor aofInterceptor = CacheInterceptors.aof();
 
     /**
+     *
+     */
+    private final ICacheInterceptor evictInterceptor = CacheInterceptors.evict();
+
+    /**
      * 新建实例对象
      * @return
      */
@@ -103,6 +108,14 @@ public final class CacheProxyBs {
                     aofInterceptor.before(interceptorContext);
                 }else {
                     aofInterceptor.after(interceptorContext);
+                }
+            }
+            // 驱逐策略
+            if(cacheInterceptor.evict()){
+                if (before){
+                    evictInterceptor.before(interceptorContext);
+                }else{
+                    evictInterceptor.after(interceptorContext);
                 }
             }
         }

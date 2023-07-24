@@ -33,5 +33,9 @@ public @interface CacheInterceptor {
      */
     boolean aof() default false;
 
-
+    /**
+     * 是否进行驱逐，默认为false
+     * @return
+     */
+    boolean evict() default false;
 }
