@@ -41,12 +41,12 @@ public abstract class AbstractCacheEvict<K, V> implements ICacheEvict<K, V> {
     protected abstract ICacheEntry<K, V> doEvict(ICacheEvictContext<K, V> context);
 
     @Override
-    public void update(K key) {
+    public void updateKey(K key) {
 
     }
 
     @Override
-    public void remove(K key) {
+    public void removeKey(K key) {
 
     }
 }
