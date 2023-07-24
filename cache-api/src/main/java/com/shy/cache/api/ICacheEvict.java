@@ -8,7 +8,21 @@ package com.shy.cache.api;
 public interface ICacheEvict<K, V> {
     /**
      * 驱逐方法
+     *
      * @param context 驱逐的信息封装
      */
-    boolean evict(ICacheEvictContext<K, V> context);
+    ICacheEntry<K, V> evict(ICacheEvictContext<K, V> context);
+
+    /**
+     * 更新 key 信息
+     * @param key
+     */
+    void update(final K key);
+
+    /**
+     * 移除 key 信息
+     * @param key
+     */
+    void remove(final K key);
+
 }

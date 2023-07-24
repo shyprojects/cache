@@ -2,11 +2,9 @@ package com.shy.cache.core.core;
 
 import com.shy.cache.annotation.CacheInterceptor;
 import com.shy.cache.api.*;
-import com.shy.cache.core.constant.enums.CacheRemoveType;
 import com.shy.cache.core.exception.CacheRuntimeException;
 import com.shy.cache.core.support.evict.CacheEvictContext;
 import com.shy.cache.core.support.expire.CacheExpire;
-import com.shy.cache.core.support.listener.remove.CacheRemoveListenerContext;
 import com.shy.cache.core.support.persist.InnerCachePersist;
 
 import java.util.*;
@@ -75,6 +73,11 @@ public class Cache<K, V> implements ICache<K, V> {
         return this.persist;
     }
 
+    @Override
+    public ICacheEvict<K, V> evict() {
+        return this.cacheEvict;
+    }
+
     public ICache<K,V> load(ICacheLoad<K,V> load){
         this.load = load;
         return this;
@@ -113,7 +116,6 @@ public class Cache<K, V> implements ICache<K, V> {
 
     /**
      * 设置sizeLimit
-     *
      * @param sizeLimit
      * @return
      */
@@ -143,23 +145,17 @@ public class Cache<K, V> implements ICache<K, V> {
     }
 
     @Override
-    @CacheInterceptor(aof = true)
+    @CacheInterceptor(aof = true,evict = true)
     public V put(K key, V value) {
-        // 尝试驱逐
+        // 1.尝试驱逐
         CacheEvictContext<K, V> context = new CacheEvictContext<>();
         context.key(key).size(sizeLimit).cache(this);
-        boolean evictResult = cacheEvict.evict(context);
-        if (evictResult) {
-            ICacheRemoveListenerContext<K, V> removeListenerContext = CacheRemoveListenerContext.<K, V>newInstance().key(key).value(value).type(CacheRemoveType.EVICT.code());
-            for (ICacheRemoveListener<K, V> removeListener : this.removeListeners) {
-                removeListener.listen(removeListenerContext);
-            }
-        }
-        // 判断驱逐之后的信息
+        cacheEvict.evict(context);
+        // 2.判断驱逐之后的信息
         if (isSizeLimit()) {
             throw new CacheRuntimeException("当前队列已满，数据添加失败!");
         }
-        // 执行添加
+        // 3.执行添加
         return map.put(key, value);
     }
 
@@ -223,7 +219,7 @@ public class Cache<K, V> implements ICache<K, V> {
     }
 
     @Override
-    @CacheInterceptor(refresh = true)
+    @CacheInterceptor(refresh = true,evict = true)
     public boolean containsKey(Object key) {
         return map.containsKey(key);
     }
@@ -235,7 +231,7 @@ public class Cache<K, V> implements ICache<K, V> {
     }
 
     @Override
-    @CacheInterceptor
+    @CacheInterceptor(evict = true)
     public V get(Object key) {
         //刷新过期信息,因为get(key)只需要获取这个key是否存在，因此只需要刷新这一个key即可
         K genericKey = (K) key;
@@ -244,7 +240,7 @@ public class Cache<K, V> implements ICache<K, V> {
     }
 
     @Override
-    @CacheInterceptor(aof = true)
+    @CacheInterceptor(aof = true,evict = true)
     public V remove(Object key) {
         return map.remove(key);
     }

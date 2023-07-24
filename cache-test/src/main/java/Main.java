@@ -104,4 +104,17 @@ public class Main {
                 .build();
         System.out.println(cache.keySet());
     }
+
+    @Test
+    public void testLru(){
+        ICache<String, String> cache = CacheBs.<String, String>newInstance()
+                .evict(CacheEvicts.lru())
+                .size(2)
+                .build();
+        cache.put("k1","v1");
+        cache.put("k2","v2");
+        System.out.println(cache.get("k1"));
+        cache.put("k3","v3");
+        System.out.println(cache.keySet());
+    }
 }

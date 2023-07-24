@@ -13,26 +13,25 @@ import java.util.Queue;
  * @author shy
  * @date 2023-07-12 23:51
  */
-public class CacheEvictFIFO<K, V> implements ICacheEvict<K, V> {
+public class CacheEvictFIFO<K, V> extends AbstractCacheEvict<K,V> {
 
     private Queue<K> queue = new LinkedList<>();
 
+
     @Override
-    public boolean evict(ICacheEvictContext<K, V> context) {
-        //CacheEntry result = null;
-        boolean result = false;
+    protected ICacheEntry<K, V> doEvict(ICacheEvictContext<K, V> context) {
+        CacheEntry<K,V> entry = null;
         ICache<K, V> cache = context.cache();
-        // 超过限制，移除
-        if (cache.size() >= context.size()) {
+        //如果超过限制，就移除
+        if (cache.size() >= context.size()){
             K evictKey = queue.remove();
-            V value = cache.remove(evictKey);
-            result = true;
-//            result = CacheEntry.of(evictKey,value);
+            V evictValue = cache.get(evictKey);
+            entry = CacheEntry.of(evictKey, evictValue);
         }
-        // 将新添加的元素添加到队尾
-        final K key = context.key();
+        //移除完之后，将新加的元素放到队列头
+        K key = context.key();
         queue.add(key);
-        return result;
+        return entry;
     }
 
 //    @Override
