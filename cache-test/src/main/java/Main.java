@@ -6,6 +6,7 @@ import com.shy.cache.core.support.load.CacheLoadAof;
 import com.shy.cache.core.support.load.CacheLoadDbJson;
 import com.shy.cache.core.support.persist.CachePersistDbJson;
 import com.shy.cache.core.support.persist.CachePersists;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
@@ -115,6 +116,42 @@ public class Main {
         cache.put("k2","v2");
         System.out.println(cache.get("k1"));
         cache.put("k3","v3");
+        System.out.println(cache.keySet());
+    }
+    @Test
+    public void lruDoubleListMapTest() throws InterruptedException {
+        ICache<String, String> cache = CacheBs.<String,String>newInstance()
+                .size(3)
+                .evict(CacheEvicts.<String, String>lruDoubleListMap())
+                .build();
+
+        cache.put("A", "hello");
+        cache.put("B", "world");
+        cache.put("C", "FIFO");
+
+        // 访问一次A
+        cache.get("A");
+        cache.put("D", "LRU");
+
+        Assert.assertEquals(3, cache.size());
+        System.out.println(cache.keySet());
+    }
+    @Test
+    public void lruLinkedHashMapTest() throws InterruptedException {
+        ICache<String, String> cache = CacheBs.<String,String>newInstance()
+                .size(3)
+                .evict(CacheEvicts.<String, String>lruLinkedHashMap())
+                .build();
+
+        cache.put("A", "hello");
+        cache.put("B", "world");
+        cache.put("C", "FIFO");
+
+        // 访问一次A
+        cache.get("A");
+        cache.put("D", "LRU");
+
+        Assert.assertEquals(3, cache.size());
         System.out.println(cache.keySet());
     }
 }

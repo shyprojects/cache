@@ -42,4 +42,16 @@ public class CacheEvicts {
     public static <K, V> ICacheEvict<K, V> lru(){
         return new CacheEvictLRU<>();
     }
+
+    /**
+     * lru的LinkedHashMap实现
+     * @return
+     */
+    public static ICacheEvict<String, String> lruLinkedHashMap() {
+        return new CacheEvictLruLinkedHashMap<>();
+    }
+
+    public static ICacheEvict<String, String> lruDoubleListMap() {
+        return new CacheEvictLruDoubleListMap<>();
+    }
 }
