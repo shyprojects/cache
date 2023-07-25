@@ -40,7 +40,7 @@ public class CacheEvicts {
      * @param <V>
      */
     public static <K, V> ICacheEvict<K, V> lru(){
-        return new CacheEvictLRU<>();
+        return new CacheEvictLru<>();
     }
 
     /**
@@ -53,5 +53,13 @@ public class CacheEvicts {
 
     public static ICacheEvict<String, String> lruDoubleListMap() {
         return new CacheEvictLruDoubleListMap<>();
+    }
+
+    public static ICacheEvict<String, String> lru2Q() {
+        return new CacheEvictLru2Q<>();
+    }
+
+    public static ICacheEvict<String, String> lru2() {
+        return new CacheEvictLru2<>();
     }
 }

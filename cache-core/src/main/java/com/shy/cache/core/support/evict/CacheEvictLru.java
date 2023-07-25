@@ -2,7 +2,6 @@ package com.shy.cache.core.support.evict;
 
 import com.shy.cache.api.ICache;
 import com.shy.cache.api.ICacheEntry;
-import com.shy.cache.api.ICacheEvict;
 import com.shy.cache.api.ICacheEvictContext;
 import com.shy.cache.core.model.CacheEntry;
 
@@ -13,7 +12,7 @@ import java.util.List;
  * @author shy
  * @date 2023-07-18 23:13
  */
-public class CacheEvictLRU<K, V> extends AbstractCacheEvict<K,V> {
+public class CacheEvictLru<K, V> extends AbstractCacheEvict<K,V> {
 
     /**
      * list信息

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>cache</artifactId>
         <groupId>com.shy</groupId>
-        <version>0.0.10</version>
+        <version>0.0.12</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -31,8 +31,7 @@
         <dependency>
             <groupId>com.shy</groupId>
             <artifactId>cache-core</artifactId>
-            <version>0.0.10</version>
-            <scope>compile</scope>
+            <version>0.0.12</version>
         </dependency>
     </dependencies>
 

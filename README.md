@@ -84,6 +84,20 @@ v3
 
 
 
+# 淘汰策略
+
+目前内置了几种淘汰策略，可以直接通过 `CacheEvicts` 工具类创建。
+
+| 淘汰策略         | 说明                                                     |
+| ---------------- | -------------------------------------------------------- |
+| none             | 无淘汰策略，超出限制直接抛出异常                         |
+| fifo             | 先进先出淘汰策略                                         |
+| lru              | 最基本的lru策略                                          |
+| lruDoubleListMap | 基于双向链表+MAP 实现的LRU，性能优于 lru                 |
+| lruLinkedHashMap | 基于 LinkedHashMap 实现的LRU，与 lruDoubleListMap 差不多 |
+| lru2Q            | 基于 LRU 2Q 的改进版 LRU 实现，命中率优于LRU             |
+| lru2             | 基于 LRU-2 的改进版 LRU 实现，命中率优于 lru2Q           |
+
 # 慢日志监听器
 
 **说明：**redis会存储慢操作相关日志，主要是由两个参数构成：
