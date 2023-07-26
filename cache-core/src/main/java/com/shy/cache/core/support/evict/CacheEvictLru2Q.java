@@ -7,8 +7,6 @@ import com.shy.cache.api.ICacheEvictContext;
 import com.shy.cache.core.exception.CacheRuntimeException;
 import com.shy.cache.core.model.CacheEntry;
 import com.shy.cache.core.model.DoubleListNode;
-import com.sun.media.sound.DLSModulator;
-import lombok.extern.java.Log;
 import org.apache.log4j.Logger;
 
 import java.util.HashMap;

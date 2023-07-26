@@ -62,4 +62,8 @@ public class CacheEvicts {
     public static ICacheEvict<String, String> lru2() {
         return new CacheEvictLru2<>();
     }
+
+    public static ICacheEvict<String, String> lfu() {
+        return new CacheEvictLfu<>();
+    }
 }
