@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 public class CacheExpire<K, V> implements ICacheExpire<K, V> {
 
     /**
-     * 每次清除的上线
+     * 每次清除的上限
      */
     private static final int LIMIT = 100;
 
