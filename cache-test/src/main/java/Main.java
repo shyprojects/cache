@@ -4,11 +4,13 @@ import com.shy.cache.core.support.evict.CacheEvictFIFO;
 import com.shy.cache.core.support.evict.CacheEvicts;
 import com.shy.cache.core.support.load.CacheLoadAof;
 import com.shy.cache.core.support.load.CacheLoadDbJson;
+import com.shy.cache.core.support.map.MyProgressiveReHashMap;
 import com.shy.cache.core.support.persist.CachePersistDbJson;
 import com.shy.cache.core.support.persist.CachePersists;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /***
@@ -212,4 +214,15 @@ public class Main {
         System.out.println(cache.keySet());
     }
 
+    @Test
+    public void testHashTable(){
+        Map<String, String> map = new MyProgressiveReHashMap<>(2, true);
+        map.put("1", "1");
+        map.put("2", "2");
+        map.put("3", "3");
+
+        Assert.assertEquals("1", map.get("1"));
+        Assert.assertEquals("2", map.get("2"));
+        Assert.assertEquals("3", map.get("3"));
+    }
 }
